@@ -27,6 +27,26 @@ contract TestMailbox is Mailbox {
         return _proof;
     }
 
+    function proof(uint32 checkpointIndex)
+        external
+        view
+        returns (bytes32[32] memory)
+    {
+        bytes32[32] memory _zeroes = MerkleLib.zeroHashes();
+        uint256 _index = checkpointIndex;
+        bytes32[32] memory _proof;
+
+        for (uint256 i = 0; i < 32; i++) {
+            uint256 _ithBit = (_index >> i) & 0x01;
+            if (_ithBit == 1) {
+                _proof[i] = tree.branch[i];
+            } else {
+                _proof[i] = _zeroes[i];
+            }
+        }
+        return _proof;
+    }
+
     function testHandle(
         uint32 _origin,
         bytes32 _sender,
